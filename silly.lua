@@ -4,7 +4,7 @@ local function jumpToServer()
 local sfUrl = "https://games.roblox.com/v1/games/%s/servers/Public?sortOrder=%s&limit=%s&excludeFullGames=true" 
 local req = request({ Url = string.format(sfUrl, 15502339080, "Desc", 100) }) 
 local body = game:GetService("HttpService"):JSONDecode(req.Body) 
-local deep = math.random(1, 3)
+local deep = math.random(1, 2)
 if deep > 1 then 
     for i = 1, deep, 1 do 
         req = request({ Url = string.format(sfUrl .. "&cursor=" .. body.nextPageCursor, 15502339080, "Desc", 100) }) 
