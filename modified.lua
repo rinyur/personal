@@ -1,3 +1,10 @@
+--[[
+Credits List
+ethereum: creating the base sniper
+chocolog: providing type.huge
+Edmond: offered tips for optimization
+]]--
+
 local osclock = os.clock()
 repeat task.wait() until game:IsLoaded()
 
@@ -10,7 +17,8 @@ local PlayerInServer = #getPlayers
 local http = game:GetService("HttpService")
 local ts = game:GetService("TeleportService")
 local rs = game:GetService("ReplicatedStorage")
-local playerID, snipeNormal
+local Library = require(rs:WaitForChild('Library'))
+local snipeNormal
 
 if not snipeNormalPets then
     snipeNormalPets = false
@@ -23,28 +31,30 @@ Players.LocalPlayer.Idled:connect(function()
    vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
 end)
 
+if PlayerInServer < 25 then
+    while task.wait(1) do
+	jumpToServer()
+    end
+end
+
 for i = 1, PlayerInServer do
    for ii = 1,#alts do
         if getPlayers[i].Name == alts[ii] and alts[ii] ~= Players.LocalPlayer.Name then
-            jumpToServer()
+            while task.wait(1) do
+		jumpToServer()
+	    end
         end
     end
 end
 
-local function processListingInfo(uid, gems, item, version, shiny, amount, boughtFrom, boughtStatus, mention)
+local function processListingInfo(uid, gems, item, version, shiny, amount, boughtFrom, boughtStatus, class, mention, failMessage, snipeNormal)
     local gemamount = Players.LocalPlayer.leaderstats["💎 Diamonds"].Value
     local snipeMessage ="||".. Players.LocalPlayer.Name .. "||"
     local weburl, webContent, webcolor
-    if version then
-        if version == 2 then
-            version = "Rainbow "
-        elseif version == 1 then
-            version = "Golden "
-        end
-    else
-       version = ""
-    end
 
+    local versionVal = { [1] = "Golden", [2] = "Rainbow" }
+    local versionStr = versionVal[version] or (version == nil and "Normal" or "")
+	
     if boughtStatus then
 	webcolor = tonumber(0x00ff00)
 	weburl = webhook
@@ -56,14 +66,20 @@ local function processListingInfo(uid, gems, item, version, shiny, amount, bough
 	end
 	if snipeNormal == true then
 	    weburl = normalwebhook
+	    snipeNormal = false
 	end
     else
+	webContent = failMessage
 	webcolor = tonumber(0xff0000)
 	weburl = webhookFail
 	snipeMessage = snipeMessage .. " failed to snipe a "
+	if snipeNormal == true then
+	    weburl = normalwebhook
+	    snipeNormal = false
+	end
     end
     
-    snipeMessage = snipeMessage .. "**" .. version
+    snipeMessage = snipeMessage .. "**" .. versionStr
     
     if shiny then
         snipeMessage = snipeMessage .. " Shiny "
@@ -76,7 +92,7 @@ local function processListingInfo(uid, gems, item, version, shiny, amount, bough
         ['embeds'] = {
             {
 		["author"] = {
-			["name"] = "💀",
+			["name"] = "Luna 🌚",
 			["icon_url"] = "https://cdn.discordapp.com/attachments/1149218291957637132/1190527382583525416/new-moon-face_1f31a.png?ex=65a22006&is=658fab06&hm=55f8900eef039709c8e57c96702f8fb7df520333ec6510a81c31fc746193fbf2&",
 		},
                 ['title'] = snipeMessage,
@@ -106,7 +122,7 @@ local function processListingInfo(uid, gems, item, version, shiny, amount, bough
                 },
 		["footer"] = {
                         ["icon_url"] = "https://cdn.discordapp.com/attachments/1149218291957637132/1190527382583525416/new-moon-face_1f31a.png?ex=65a22006&is=658fab06&hm=55f8900eef039709c8e57c96702f8fb7df520333ec6510a81c31fc746193fbf2&", -- optional
-                        ["text"] = "Heavily Modified by rin"
+                        ["text"] = "Heavily Modified by Root"
 		}
             },
         }
@@ -128,106 +144,97 @@ local function processListingInfo(uid, gems, item, version, shiny, amount, bough
     end
 end
 
-local function checklisting(uid, gems, item, version, shiny, amount, username, playerid)
-    local Library = require(rs:WaitForChild('Library'))
-    local purchase = rs.Network.Booths_RequestPurchase
-    gems = tonumber(gems)
-    local ping = false
-    snipeNormal = false
-    local type = {}
-    pcall(function()
-        type = Library.Directory.Pets[item]
-    end)
-
-    if amount == nil then
-        amount = 1
+local function tryPurchase(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp, ping, snipeNormal)
+    print("PURCHASING ATTEMPT START") --for testings
+    --while (buytimestamp - os.time()) > 1 then
+    if buytimestamp > listTimestamp then
+      task.wait(3.4 - Players.LocalPlayer:GetNetworkPing())
     end
-
-    local price = gems / amount
-    task.wait(3.05)
-    if type.huge and price <= 1000000 then	
-        local boughtPet, boughtMessage = purchase:InvokeServer(playerid, uid)
-        if boughtPet == true then
-            ping = true
-	end    
-	processListingInfo(uid, gems, item, version, shiny, amount, username, boughtPet, ping)	
-    elseif item == "Huge Hunter " and gems <= 100000 then
-        local boughtPet, boughtMessage = purchase:InvokeServer(playerid, uid)
-        processListingInfo(uid, gems, item, version, shiny, amount, username, boughtPet)
-    elseif type.exclusiveLevel and gems <= 10000 and item ~= "Banana" and item ~= "Coin" then
-        local boughtPet, boughtMessage = purchase:InvokeServer(playerid, uid)
-        processListingInfo(uid, gems, item, version, shiny, amount, username, boughtPet, ping)
-    elseif string.find(item, "Exclusive") and gems <= 25000 then	
-        local boughtPet, boughtMessage = purchase:InvokeServer(playerid, uid)
-        processListingInfo(uid, gems, item, version, shiny, amount, username, boughtPet, ping)
-    elseif item == "Titanic Christmas Present" and gems <= 25000 then
-        local boughtPet, boughtMessage = purchase:InvokeServer(playerid, uid)
-        processListingInfo(uid, gems, item, version, shiny, amount, username, boughtPet, ping)
-    elseif item == "Chest Mimic" and gems <= 100000 then
-        local boughtPet, boughtMessage = purchase:InvokeServer(playerid, uid)
-        processListingInfo(uid, gems, item, version, shiny, amount, username, boughtPet, ping)
-    elseif item == "Diamond Chest Mimic" and gems <= 100000 then
-        local boughtPet, boughtMessage = purchase:InvokeServer(playerid, uid)
-        processListingInfo(uid, gems, item, version, shiny, amount, username, boughtPet, ping)
-    elseif item == "Fortune" and gems <= 100000 then	
-        local boughtPet, boughtMessage = purchase:InvokeServer(playerid, uid)
-        processListingInfo(uid, gems, item, version, shiny, amount, username, boughtPet, ping)
-    elseif item == "Lucky Block" and gems <= 100000 then
-        local boughtPet, boughtMessage = purchase:InvokeServer(playerid, uid)
-        processListingInfo(uid, gems, item, version, shiny, amount, username, boughtPet, ping)
-    elseif item == "Crystal Key" and gems <= 10000 then	
-        local boughtPet, boughtMessage = purchase:InvokeServer(playerid, uid)
-        processListingInfo(uid, gems, item, version, shiny, amount, username, boughtPet, ping)
-    elseif item == "Crystal Key Lower Half" and gems <= 1000 then	
-        local boughtPet, boughtMessage = purchase:InvokeServer(playerid, uid)
-        processListingInfo(uid, gems, item, version, shiny, amount, username, boughtPet, ping)
-    elseif item == "Crystal Key Upper Half" and gems <= 1000 then
-        local boughtPet, boughtMessage = purchase:InvokeServer(playerid, uid)
-        processListingInfo(uid, gems, item, version, shiny, amount, username, boughtPet, ping)
-    elseif item == "Spinny Wheel Ticket" and gems <= 5000 then
-        local boughtPet, boughtMessage = purchase:InvokeServer(playerid, uid)
-        processListingInfo(uid, gems, item, version, shiny, amount, username, boughtPet, ping)
-    elseif item == "Booth Slot Voucher" and gems <= 25000 then	
-        local boughtPet, boughtMessage = purchase:InvokeServer(playerid, uid)
-        processListingInfo(uid, gems, item, version, shiny, amount, username, boughtPet, ping)
-    elseif type.titanic and price <= 10000000 then	
-        local boughtPet, boughtMessage = purchase:InvokeServer(playerid, uid)
-        if boughtPet == true then
-	    ping = true
-	end
-        processListingInfo(uid, gems, item, version, shiny, amount, username, boughtPet, ping)
-    end
+    print("PURCHASING ATTEMPT END - os " .. os.time() .. " - buy " .. buytimestamp .. " - offset " .. listTimestamp) --for testings
+    local boughtPet, boughtMessage = game:GetService("ReplicatedStorage").Network.Booths_RequestPurchase:InvokeServer(playerid, uid)
+    processListingInfo(uid, gems, item, version, shiny, amount, username, boughtPet, class, ping, boughtMessage, snipeNormal)
 end
 
 Booths_Broadcast.OnClientEvent:Connect(function(username, message)
-    local playerIDSuccess, playerError = pcall(function()
-	playerID = message['PlayerID']
-    end)
-    if playerIDSuccess then
         if type(message) == "table" then
-            local listing = message["Listings"]
-            for key, value in pairs(listing) do
-                if type(value) == "table" then
-                    local uid = key
-                    local gems = value["DiamondCost"]
-                    local itemdata = value["ItemData"]
-
-                    if itemdata then
-                        local data = itemdata["data"]
-
-                        if data then
-                            local item = data["id"]
-                            local version = data["pt"]
-                            local shiny = data["sh"]
-                            local amount = data["_am"]
-                            checklisting(uid, gems, item, version, shiny, amount, username, playerID)
-                        end
+            local highestTimestamp = -math.huge -- Initialize with the smallest possible number
+            local key = nil
+            local listing = nil
+            for v, value in pairs(message["Listings"] or {}) do
+                if type(value) == "table" and value["ItemData"] and value["ItemData"]["data"] then
+                    local timestamp = value["Timestamp"]
+                    if timestamp > highestTimestamp then
+                        highestTimestamp = timestamp
+                        key = v
+                        listing = value
                     end
                 end
             end
-	end
-    end
-end)
+            if listing then
+                local buytimestamp = listing["ReadyTimestamp"]
+                local listTimestamp = listing["Timestamp"]
+                local data = listing["ItemData"]["data"]
+                local gems = tonumber(listing["DiamondCost"])
+                local uid = key
+                local item = data["id"]
+                local version = data["pt"]
+                local shiny = data["sh"]
+                local amount = tonumber(data["_am"]) or 1
+                local playerid = message['PlayerID']
+                local class = tostring(listing["ItemData"]["class"])
+                local unitGems = gems/amount
+		local ping = false
+		snipeNormal = false
+                    
+                print(string.format("%s listed %s %s - %s gems, %s gems/unit", tostring(username), tostring(amount), tostring(item), tostring(gems), tostring(unitGems)))                
+                if string.find(item, "Huge") and unitGems <= 100000 then
+                    coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp, ping, snipeNormal)
+                    return
+                elseif snipeNormalPets == true and gems == 1 then
+                        snipeNormal = true
+		        coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp, ping, snipeNormal)
+                        return
+                elseif class == "Pet" then
+                    local type = Library.Directory.Pets[item]
+                    if type.exclusiveLevel and unitGems <= 15000 and item ~= "Banana" and item ~= "Coin" then
+                        coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp, ping, snipeNormal)
+                        return
+                    elseif type.titanic and unitGems <= 10000000 then
+                        ping = true
+			coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp, ping, snipeNormal)
+                        return
+                    elseif type.huge and unitGems <= 1000000 then
+                        ping = true
+			coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp, ping, snipeNormal)
+                        return
+		    end
+                elseif (item == "Titanic Christmas Present" or string.find(item, "2024 New Year")) and unitGems <= 30000 then
+                    coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp, ping, snipeNormal)
+                    return
+                elseif class == "Egg" and unitGems <= 30000 then
+                    coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp, ping, snipeNormal)
+                    return
+                elseif ((string.find(item, "Key") and not string.find(item, "Lower")) or string.find(item, "Ticket") or string.find(item, "Charm") or class == "Charm") and unitGems <= 2500 then 
+                    coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp, ping)
+                    return
+                elseif class == "Enchant" and unitGems <= 30000 then
+                    if item == "Fortune" then 
+                        coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp, ping, snipeNormal)
+                        return
+                    elseif string.find(item, "Chest Mimic") then
+                        coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp, ping, snipeNormal)
+                        return
+                    elseif item == "Lucky Block" then
+                        coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp, ping, snipeNormal)
+                        return
+                    elseif item == "Massive Comet" then
+                        coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp, ping, snipeNormal)
+                        return
+                    end
+                end
+            end
+        end
+    end)
 
 local function jumpToServer() 
     local sfUrl = "https://games.roblox.com/v1/games/%s/servers/Public?sortOrder=%s&limit=%s&excludeFullGames=true" 
@@ -257,22 +264,29 @@ local function jumpToServer()
 end
 
 Players.PlayerRemoving:Connect(function(player)
+    getPlayers = Players:GetPlayers()
     PlayerInServer = #getPlayers
     if PlayerInServer < 25 then
-        jumpToServer()
+        while task.wait(1) do
+	    jumpToServer()
+	end
     end
 end) 
 
 Players.PlayerAdded:Connect(function(player)
     for i = 1,#alts do
         if player.Name == alts[i] and alts[i] ~= Players.LocalPlayer.Name then
-            jumpToServer()
+            while task.wait(1) do
+	        jumpToServer()
+	    end
         end
     end
 end) 
 
 while task.wait(1) do
     if math.floor(os.clock() - osclock) >= math.random(900, 1200) then
-        jumpToServer()
+        while task.wait(1) do
+	    jumpToServer()		
+	end	
     end
 end
