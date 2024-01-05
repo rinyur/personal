@@ -42,7 +42,7 @@ local function processListingInfo(uid, gems, item, version, shiny, amount, bough
     if boughtStatus then
 	webcolor = tonumber(0x00ff00)
 	weburl = webhook
-        snipeMessage = snipeMessage .. " just sniped a "
+        snipeMessage = snipeMessage .. " just sniped ".. Library.Functions.Commas(amount) .."x "
         webContent = mention
 	if snipeNormal == true then
 	    weburl = normalwebhook
@@ -52,7 +52,7 @@ local function processListingInfo(uid, gems, item, version, shiny, amount, bough
 	webContent = failMessage
 	webcolor = tonumber(0xff0000)
 	weburl = webhookFail
-	snipeMessage = snipeMessage .. " failed to snipe a "
+	snipeMessage = snipeMessage .. " failed to snipe ".. Library.Functions.Commas(amount) .."x "
 	if snipeNormal == true then
 	    weburl = normalwebhook
 	    snipeNormal = false
@@ -81,7 +81,7 @@ local function processListingInfo(uid, gems, item, version, shiny, amount, bough
                 ['fields'] = {
                     {
                         ['name'] = "__Price:__",
-                        ['value'] = tostring(gems) .. " 💎",
+                        ['value'] = Library.Functions.ParseNumberSmart(gems) .. " 💎",
                     },
                     {
                         ['name'] = "__Bought from:__",
@@ -89,11 +89,11 @@ local function processListingInfo(uid, gems, item, version, shiny, amount, bough
                     },
                     {
                         ['name'] = "__Amount:__",
-                        ['value'] = tostring(amount) .. "x",
+                        ['value'] = Library.Functions.Commas(amount) .. "x",
                     },
                     {
                         ['name'] = "__Remaining gems:__",
-                        ['value'] = tostring(gemamount) .. " 💎",
+                        ['value'] = Library.Functions.ParseNumberSmart(gemamount) .. " 💎",
                     },      
                     {
                         ['name'] = "__PetID:__",
@@ -184,10 +184,13 @@ Booths_Broadcast.OnClientEvent:Connect(function(username, message)
                 elseif (item == "Titanic Christmas Present" or string.find(item, "2024 New Year")) and unitGems <= 30000 then
                     coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp, snipeNormal)
                     return
+		elseif (string.find(item, "Charm") or (class == "Charm" and not string.find(item, "Agility") and not string.find(item, "Coins") and not string.find(item, "Bonus"))) and unitGems <= 30000 then
+                    coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp, snipeNormal)
+                    return
                 elseif class == "Egg" and unitGems <= 30000 then
                     coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp, snipeNormal)
                     return
-                elseif ((string.find(item, "Key") and not string.find(item, "Lower")) or string.find(item, "Ticket") or string.find(item, "Charm") or class == "Charm") and unitGems <= 2500 then 
+                elseif ((string.find(item, "Key") and not string.find(item, "Lower")) or string.find(item, "Ticket")) and unitGems <= 2500 then 
                     coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp, snipeNormal)
                     return
                 elseif class == "Enchant" and unitGems <= 30000 then
@@ -273,7 +276,7 @@ Players.PlayerAdded:Connect(function(player)
     end
 end) 
 
-local hopDelay = math.random(900, 1200)
+local hopDelay = math.random(840, 1140)
 
 while task.wait(1) do
     if math.floor(os.clock() - osclock) >= hopDelay then
