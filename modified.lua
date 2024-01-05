@@ -9,6 +9,7 @@ local osclock = os.clock()
 repeat task.wait() until game:IsLoaded()
 
 setfpscap(10)
+game.Players.LocalPlayer.PlayerScripts.Scripts.Core["Idle Tracking"].Enabled = false
 game:GetService("RunService"):Set3dRenderingEnabled(false)
 local Booths_Broadcast = game:GetService("ReplicatedStorage").Network:WaitForChild("Booths_Broadcast")
 local Players = game:GetService('Players')
@@ -165,6 +166,9 @@ Booths_Broadcast.OnClientEvent:Connect(function(username, message)
                 if string.find(item, "Huge") and unitGems <= 100000 then
                     coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp, snipeNormal)
                     return
+		elseif string.find(item, "Charm") and unitGems <= 30000 then
+                    coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp, snipeNormal)
+                    return
                 elseif snipeNormalPets == true and gems == 1 then
                         snipeNormal = true
 		        coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp,   snipeNormal)
@@ -184,9 +188,11 @@ Booths_Broadcast.OnClientEvent:Connect(function(username, message)
                 elseif (item == "Titanic Christmas Present" or string.find(item, "2024 New Year")) and unitGems <= 30000 then
                     coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp, snipeNormal)
                     return
-		elseif (string.find(item, "Charm") or (class == "Charm" and not string.find(item, "Agility") and not string.find(item, "Coins") and not string.find(item, "Bonus"))) and unitGems <= 30000 then
-                    coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp, snipeNormal)
-                    return
+		elseif class == "Charm" and unitGems <= 30000 then
+		    if not string.find(item, "Coins") and not string.find(item, "Agility") and not string.find(item, "Bonus") then
+                    	coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp, snipeNormal)
+                    	return
+	            end
                 elseif class == "Egg" and unitGems <= 30000 then
                     coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp, snipeNormal)
                     return
@@ -214,12 +220,12 @@ Booths_Broadcast.OnClientEvent:Connect(function(username, message)
 
 local function jumpToServer() 
     local sfUrl = "https://games.roblox.com/v1/games/%s/servers/Public?sortOrder=%s&limit=%s&excludeFullGames=true" 
-    local req = request({ Url = string.format(sfUrl, 15502339080, "Desc", 50) }) 
+    local req = request({ Url = string.format(sfUrl, 15502339080, "Desc", 100) }) 
     local body = http:JSONDecode(req.Body) 
-    local deep = math.random(1, 5)
+    local deep = math.random(1, 3)
     if deep > 1 then 
         for i = 1, deep, 1 do 
-             req = request({ Url = string.format(sfUrl .. "&cursor=" .. body.nextPageCursor, 15502339080, "Desc", 50) }) 
+             req = request({ Url = string.format(sfUrl .. "&cursor=" .. body.nextPageCursor, 15502339080, "Desc", 100) }) 
              body = http:JSONDecode(req.Body) 
              task.wait(0.1)
         end 
