@@ -6,7 +6,7 @@ Edmond: offered tips for optimization
 ]]--
 
 local osclock = os.clock()
-repeat task.wait() until game:IsLoaded()
+repeat wait() until game:IsLoaded()
 
 setfpscap(10)
 game.Players.LocalPlayer.PlayerScripts.Scripts.Core["Idle Tracking"].Enabled = false
