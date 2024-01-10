@@ -263,7 +263,7 @@ local function jumpToServer()
     ts:TeleportToPlaceInstance(15502339080, servers[math.random(1, randomCount)], game:GetService("Players").LocalPlayer) 
 end
 
-if PlayerInServer < 25 then
+if PlayerInServer < 30 then
     while task.wait(10) do
 	jumpToServer()
     end
@@ -282,7 +282,7 @@ end
 Players.PlayerRemoving:Connect(function(player)
     getPlayers = Players:GetPlayers()
     PlayerInServer = #getPlayers
-    if PlayerInServer < 25 then
+    if PlayerInServer < 30 then
         while task.wait(10) do
 	    jumpToServer()
 	end
@@ -300,7 +300,7 @@ Players.PlayerAdded:Connect(function(player)
     end
 end) 
 
-local hopDelay = math.random(720, 960)
+local hopDelay = math.random(720, 1000)
 
 while task.wait(1) do
     if math.floor(os.clock() - osclock) >= hopDelay then
