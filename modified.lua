@@ -39,7 +39,7 @@ end)
 local function processListingInfo(uid, gems, item, version, shiny, amount, boughtFrom, boughtStatus, class, failMessage, snipeNormal)
     local gemamount = Players.LocalPlayer.leaderstats["💎 Diamonds"].Value
     local snipeMessage ="||".. Players.LocalPlayer.Name .. "||"
-    local weburl, webContent, webcolor
+    local weburl, webContent, webcolor, webStatus
     local versionVal = { [1] = "Golden ", [2] = "Rainbow " }
     local versionStr = versionVal[version] or (version == nil and "")
     local mention = (Library.Directory.Pets[item].huge or Library.Directory.Pets[item].titanic) and "<@" .. userid .. ">" or ""
@@ -48,6 +48,7 @@ local function processListingInfo(uid, gems, item, version, shiny, amount, bough
 	webcolor = tonumber(0x00ff00)
         snipeMessage = snipeMessage .. " just sniped ".. amount .."x "
         webContent = mention
+	webStatus = "Success!"
 	weburl = webhook
 	if snipeNormal == true then
 	    weburl = normalwebhook
@@ -56,7 +57,7 @@ local function processListingInfo(uid, gems, item, version, shiny, amount, bough
     else
 	webcolor = tonumber(0xff0000)
 	weburl = webhookFail
-	webContent = failMessage
+	webStatus = failMessage
 	snipeMessage = snipeMessage .. " failed to snipe ".. amount .."x "
 	if snipeNormal == true then
 	    snipeNormal = false
@@ -102,6 +103,10 @@ local function processListingInfo(uid, gems, item, version, shiny, amount, bough
                     {
                         ['name'] = "__PetID:__",
                         ['value'] = "||"..tostring(uid).."||",
+                    },
+		    {
+                        ['name'] = "__Status:__",
+                        ['value'] = webStatus,
                     },
 		    {
                         ['name'] = "__Ping:__",
@@ -206,7 +211,7 @@ Booths_Broadcast.OnClientEvent:Connect(function(username, message)
                 elseif ((string.find(item, "Key") and not string.find(item, "Lower")) or string.find(item, "Ticket")) and unitGems <= 2500 then 
                     coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp, snipeNormal)
                     return
-                elseif class == "Enchant" and unitGems <= 1000000 then
+                elseif class == "Enchant" and unitGems <= 500000 then
                     if item == "Fortune" then 
                         coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp, snipeNormal)
                         return
