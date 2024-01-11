@@ -143,6 +143,7 @@ local function tryPurchase(uid, gems, item, version, shiny, amount, username, cl
 	    local boughtPet, boughtMessage = game:GetService("ReplicatedStorage").Network.Booths_RequestPurchase:InvokeServer(playerid, uid)
 	    processListingInfo(uid, gems, item, version, shiny, amount, username, boughtPet, class, boughtMessage, snipeNormal)
 	    signal:Disconnect()
+	    return
         end
     end)
 end
