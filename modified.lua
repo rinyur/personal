@@ -143,7 +143,7 @@ local function tryPurchase(uid, gems, item, version, shiny, amount, username, cl
 	    signal:Disconnect()
         end
     end)
-    repeat task.wait() until not signal
+    repeat task.wait() until signal.Connected == false
     local boughtPet, boughtMessage = game:GetService("ReplicatedStorage").Network.Booths_RequestPurchase:InvokeServer(playerid, uid)
     processListingInfo(uid, gems, item, version, shiny, amount, username, boughtPet, class, boughtMessage, snipeNormal)
 end
