@@ -269,7 +269,7 @@ Booths_Broadcast.OnClientEvent:Connect(function(username, message)
 		    elseif item == "Mini Chest" and unitGems <= 250000 then
                         coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp)
                         return
-		    elseif item == "Magic Shard" and unitGems <= 100000 then
+		    elseif item == "Magic Shard" and unitGems <= 80000 then
                         coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp)
                         return
 		    elseif item == "Party Box" and unitGems <= 5000 then
