@@ -231,9 +231,6 @@ Booths_Broadcast.OnClientEvent:Connect(function(username, message)
 	    elseif (item == "Secret Key" or string.find(item, "Lucky Block")) and unitGems <= 10000 then
                 coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp, snipeNormal)
                 return
-	    elseif (item == "Party Box" or string.find(item, "Bundle O' Toys")) and unitGems <= 10000 then
-                coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp, snipeNormal)
-                return
 	    elseif (item == "Bundle O' Potions" or string.find(item, "Bundle O' Flags")) and unitGems <= 10000 then
                 coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp, snipeNormal)
                 return
