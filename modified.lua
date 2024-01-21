@@ -300,7 +300,7 @@ Booths_Broadcast.OnClientEvent:Connect(function(username, message)
                     return
 
                     -- Tools 
-                elseif item == "Golden Shovel" and unitGems <= 150000 then
+                elseif item == "Golden Shovel" and unitGems <= 50000 then
                     coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp, snipeNormal)
                     return
                 elseif item == "Golden Fishing Rod" and unitGems <= 25000 then
