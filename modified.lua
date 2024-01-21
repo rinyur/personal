@@ -12,7 +12,6 @@ if not game:IsLoaded() then
     game.Loaded:Wait()
 end
 
-setfpscap(10)
 task.wait(15)
 game.Players.LocalPlayer.PlayerScripts.Scripts.Core["Idle Tracking"].Enabled = false
 game:GetService("RunService"):Set3dRenderingEnabled(false)
