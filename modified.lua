@@ -391,7 +391,7 @@ end
 Players.PlayerRemoving:Connect(function(player)
     getPlayers = Players:GetPlayers()
     PlayerInServer = #getPlayers
-    if PlayerInServer < 20 then
+    if PlayerInServer < 30 then
         while task.wait(10) do
 	    jumpToServer()
 	end
