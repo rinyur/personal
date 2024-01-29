@@ -251,9 +251,6 @@ Booths_Broadcast.OnClientEvent:Connect(function(username, message)
 		    elseif item == "Overload Charm" and unitGems <= 500000 then
                         coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp)
                         return
-		    elseif item == "Large Taps" and unitGems <= 50000 then
-                        coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp)
-                        return
 		    elseif item == "Explosive" and unitGems <= 10000 then
                         coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp)
                         return
