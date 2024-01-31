@@ -224,34 +224,19 @@ Booths_Broadcast.OnClientEvent:Connect(function(username, message)
             elseif item == "Booth Slot Voucher" and unitGems <= 10000 then
                 coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp, snipeNormal)
                 return
-            elseif string.find(item, "Charm") and unitGems <= 100000 and item ~= "Agility Charm" and item ~= "Coin Charm" and item ~= "Bonus Charm" and item ~= "Charm Stone" then
+            elseif string.find(item, "Charm") and unitGems <= 100000 and item ~= "Agility Charm" and item ~= "Coin Charm" and item ~= "Bonus Charm" and item ~= "Charm Stone" and item ~= "Lightning Charm" and item ~= "XP Charm" and item ~= "Diamonds Charm" and item ~= "TNT Charm" and item ~= "Criticals Charm" and item ~= "Strength Charm" then
                 coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp, snipeNormal)
                 return
-		    elseif item == "Secret Keys" and unitGems <= 100000 then
+		    elseif item == "Secret Keys" and unitGems <= 50000 then
                         coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp)
                         return
-		    elseif item == "Secret Keys Lower Half" and unitGems <= 30000 then
+		    elseif item == "Secret Keys Lower Half" and unitGems <= 5000 then
                         coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp)
                         return
-		    elseif item == "Secret Keys Upper Half" and unitGems <= 50000 then
-                        coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp)
-                        return
-		    elseif item == "TNT Charm" and unitGems <= 50000 then
-                        coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp)
-                        return
-		    elseif item == "Lightning Charm" and unitGems <= 50000 then
-                        coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp)
-                        return
-		    elseif item == "Criticals Charm" and unitGems <= 50000 then
-                        coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp)
-                        return
-		    elseif item == "XP Charm" and unitGems <= 30000 then
+		    elseif item == "Secret Keys Upper Half" and unitGems <= 10000 then
                         coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp)
                         return
 		    elseif item == "Overload Charm" and unitGems <= 500000 then
-                        coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp)
-                        return
-		    elseif item == "Explosive" and unitGems <= 10000 then
                         coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp)
                         return
 		    elseif item == "Magic Orb" and unitGems <= 100000 then
@@ -266,7 +251,7 @@ Booths_Broadcast.OnClientEvent:Connect(function(username, message)
 		    elseif item == "Mini Chest" and unitGems <= 30000 then
                         coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp)
                         return
-		    elseif item == "Magic Shard" and unitGems <= 5000 then
+		    elseif item == "Magic Shard" and unitGems <= 1000 then
                         coroutine.wrap(tryPurchase)(uid, gems, item, version, shiny, amount, username, class, playerid, buytimestamp, listTimestamp)
                         return
 
